@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_POOLING_URL")
+  directUrl = env("DATABASE_NON_POOLING_URL")
+}
+
+model Collection {
+  id           String      @id @default(uuid())
+  createdAt    DateTime    @default(now())
+  expiresAt    DateTime
+  
+  name         String?
+  accessUrl    String      @unique
+  isPrivate    Boolean     @default(false)
+  password     String?
+  
+  files        File[]
+  accessLogs   AccessLog[]
+}
+
+model File {
+  id               String      @id @default(uuid())
+  createdAt        DateTime    @default(now())
+  
+  filename         String
+  originalName     String
+  size             Int
+  mimeType         String
+  
+  collectionId     String
+  collection       Collection   @relation(fields: [collectionId], references: [id])
+}
+
+model AccessLog {
+  id            String       @id @default(uuid())
+  accessedAt    DateTime     @default(now())
+  
+  collectionId  String
+  collection    Collection   @relation(fields: [collectionId], references: [id])
+  
+  ip            String
+  userAgent     String
+}
