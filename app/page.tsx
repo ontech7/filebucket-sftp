@@ -1,103 +1,282 @@
-import Image from "next/image";
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { fetcher } from "@/utils/fetcher";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  CopyIcon,
+  HardDriveUploadIcon,
+  Loader2Icon,
+  UploadCloudIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import z from "zod";
+
+const formSchema = z.object({
+  name: z.string().optional(),
+  expireDays: z.enum(["1", "7", "30"], "Required."),
+  password: z.string().optional(),
+  files: z.any().transform<File[]>((f) => Array.from(f)),
+});
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [folderPath, setFolderPath] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  const [isUploading, setIsUploading] = useState(false);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      expireDays: "7",
+      password: "",
+      files: [],
+    },
+  });
+
+  const expireDays = form.watch("expireDays");
+  const hasPassword = !!form.watch("password");
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsUploading(true);
+
+    try {
+      if (data.files.length === 0) {
+        throw new Error();
+      }
+
+      const formData = new FormData();
+
+      Array.from(data.files).forEach((file) => {
+        formData.append("files", file);
+      });
+
+      formData.append("expireDays", data.expireDays);
+
+      if (data.name) {
+        formData.append("name", data.name);
+      }
+
+      if (data.password) {
+        formData.append("password", data.password);
+      }
+
+      const res = await fetcher<{ data: { path: string } }>("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res) {
+        throw Error();
+      }
+
+      setFolderPath(res.data.path);
+    } catch (err) {
+      form.setError("root", { message: "Impossible to upload." });
+    }
+
+    setIsUploading(false);
+  };
+
+  return (
+    <main className="h-screen max-w-[600px] w-full mx-auto flex justify-center items-center">
+      {!folderPath ? (
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="flex gap-2 w-full justify-center">
+              <HardDriveUploadIcon className="size-10" />
+              <span className="font-semibold text-3xl">FileBucket</span>
+            </CardTitle>
+          </CardHeader>
+          <Separator />
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-4"
+              >
+                {form.formState.errors.root && (
+                  <div className="text-red-500 text-center">
+                    {form.formState.errors.root.message}
+                  </div>
+                )}
+
+                <div className="flex gap-2 w-full">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="w-2/3">
+                        <FormLabel>Name (optional)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="e.g.: Party photos"
+                            disabled={isUploading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="expireDays"
+                    render={({ field }) => (
+                      <FormItem className="w-1/3">
+                        <FormLabel>Expire Days</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isUploading}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="1">1 day</SelectItem>
+                            <SelectItem value="7">7 days</SelectItem>
+                            <SelectItem value="30">30 days</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="flex gap-2 w-full">
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Password (optional)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            disabled={isUploading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="flex gap-2 w-full items-center">
+                  <FormField
+                    control={form.control}
+                    name="files"
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Files</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            multiple
+                            disabled={isUploading}
+                            onChange={(event) => onChange(event.target.files)}
+                            {...fieldProps}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="flex gap-2 w-full justify-center mt-4">
+                  {!isUploading ? (
+                    <Button type="submit" disabled={false}>
+                      <UploadCloudIcon />
+                      Upload
+                    </Button>
+                  ) : (
+                    <Button type="submit" disabled={true}>
+                      <Loader2Icon className="animate-spin" />
+                      Uploading...
+                    </Button>
+                  )}
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="flex gap-2 w-full justify-center">
+              <HardDriveUploadIcon className="size-10" />
+              <span className="font-semibold text-3xl">FileBucket</span>
+            </CardTitle>
+          </CardHeader>
+          <Separator />
+          <CardContent>
+            <h2 className="font-semibold text-2xl mb-2">Files transfered!</h2>
+            <div className="text-muted-foreground mb-8">
+              You can access to your files{" "}
+              <Link
+                href={folderPath}
+                target="_bank"
+                className="underline text-blue-500"
+              >
+                here
+              </Link>{" "}
+              or copy the link. <br />
+              Files will be accessibly only for {expireDays} day(s). <br />
+              {hasPassword &&
+                "The link is accessible only with the password set."}
+            </div>
+            <div className="flex gap-2 mb-8">
+              <Input
+                value={`${window.location.origin}${folderPath}`}
+                readOnly
+                className="w-full"
+              />
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `${window.location.origin}${folderPath}`
+                  );
+                }}
+              >
+                <CopyIcon />
+                Copy
+              </Button>
+            </div>
+            <div className="text-center">
+              <Button asChild>
+                <Link href="/">Do a new upload!</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </main>
   );
 }

@@ -1,8 +1,39 @@
-# How to run a local SFTP server
+# FileBucket - SFTP
+
+A simple application for uploading and sharing files securely via SFTP.
+
+![FileBucket logo](https://i.ibb.co/PVbzhzt/Screenshot-2025-07-14-alle-01-13-04.png)
+
+## Contents
+
+- [Preview](#preview)
+- [What is used](#what-is-used)
+- [How to run a local SFTP server](#how-to-run-a-local-sftp-server)
+
+## Preview
+
+![Homepage](https://i.ibb.co/SDhhWB6f/Screenshot-2025-07-14-alle-01-18-01.png)
+
+![Upload complete](https://i.ibb.co/hxSTKNqV/Screenshot-2025-07-14-alle-01-18-39.png)
+
+![Folder page](https://i.ibb.co/zTGY0c9C/Screenshot-2025-07-14-alle-01-20-45.png)
+
+## What is used
+
+- Next.js 15 — for server-side rendering and routing.
+- shadcn — UI components.
+- Prisma — to query the database using Prisma ORM (with Neon DB).
+- bcrypt — for secure password hashing.
+- Zod — for schema validation and data parsing.
+- Sharp — for image processing and optimization.
+- ssh2-sftp-client — for SFTP file transfer operations.
+- ws — for WebSocket communication.
+
+## How to run a local SFTP server
 
 This guide shows you how to quickly run an SFTP server on your local machine using the built-in SSH server available on Linux, macOS, or Windows.
 
-## Linux (Ubuntu/Debian)
+### Linux (Ubuntu/Debian)
 
 1. Install OpenSSH server
 
@@ -37,7 +68,7 @@ hostname -I
 sftp myuser@LOCAL_IP
 ```
 
-## macOS
+### macOS
 
 1. Enable Remote Login
 
@@ -64,7 +95,7 @@ ipconfig getifaddr en0
 sftp myuser@LOCAL_IP
 ```
 
-## Windows 10 / 11
+### Windows 10 / 11
 
 1. Install OpenSSH Server
 
@@ -95,7 +126,7 @@ ipconfig
 sftp myuser@LOCAL_IP
 ```
 
-## Testing your local SFTP
+### Testing your local SFTP
 
 - Use the sftp command:
 

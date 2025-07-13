@@ -19,7 +19,7 @@ model Collection {
   
   name         String?
   accessUrl    String      @unique
-  isPrivate    Boolean     @default(false)
+
   password     String?
   
   files        File[]
@@ -30,13 +30,13 @@ model File {
   id               String      @id @default(uuid())
   createdAt        DateTime    @default(now())
   
-  filename         String
+  filename         String      
   originalName     String
   size             Int
   mimeType         String
   
-  collectionId     String
-  collection       Collection   @relation(fields: [collectionId], references: [id])
+  collectionId     String       
+  collection       Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 }
 
 model AccessLog {
