@@ -2,7 +2,7 @@
 
 A simple application for uploading and sharing files securely via SFTP.
 
-![FileBucket logo](https://i.ibb.co/PVbzhzt/Screenshot-2025-07-14-alle-01-13-04.png)
+<img width="237" height="75" alt="68747470733a2f2f692e6962622e636f2f5056627a687a742f53637265656e73686f742d323032352d30372d31342d616c6c652d30312d31332d30342e706e67" src="https://github.com/user-attachments/assets/7b8a6154-5294-42c8-ad9f-0928a5f4d34e" />
 
 ## Contents
 
@@ -22,11 +22,12 @@ A simple application for uploading and sharing files securely via SFTP.
 
 ## Preview
 
-![Homepage](https://i.ibb.co/SDhhWB6f/Screenshot-2025-07-14-alle-01-18-01.png)
+<img width="1195" height="613" alt="68747470733a2f2f692e6962622e636f2f53446868574236662f53637265656e73686f742d323032352d30372d31342d616c6c652d30312d31382d30312e706e67" src="https://github.com/user-attachments/assets/7cda0fb9-b690-4fc4-b1fb-7e13d6989a08" />
 
-![Upload complete](https://i.ibb.co/hxSTKNqV/Screenshot-2025-07-14-alle-01-18-39.png)
+<img width="1049" height="580" alt="68747470733a2f2f692e6962622e636f2f687853544b4e71562f53637265656e73686f742d323032352d30372d31342d616c6c652d30312d31382d33392e706e67" src="https://github.com/user-attachments/assets/5f4181a8-3cc9-4532-b0a4-bcfa0ee3d2ed" />
 
-![Folder page](https://i.ibb.co/zTGY0c9C/Screenshot-2025-07-14-alle-01-20-45.png)
+<img width="1182" height="758" alt="68747470733a2f2f692e6962622e636f2f7a544759306339432f53637265656e73686f742d323032352d30372d31342d616c6c652d30312d32302d34352e706e67" src="https://github.com/user-attachments/assets/a1942ef5-b71c-444e-a06f-1462b39c6b3f" />
+
 
 ## What is used
 
