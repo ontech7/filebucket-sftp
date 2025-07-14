@@ -6,9 +6,18 @@ A simple application for uploading and sharing files securely via SFTP.
 
 ## Contents
 
+- [Features](#features)
 - [Preview](#preview)
 - [What is used](#what-is-used)
 - [How to run a local SFTP server](#how-to-run-a-local-sftp-server)
+
+## Features
+
+- Upload files (images, videos, documents, etc.) without authentication.
+- Generate a run-time link to be shared.
+- Possibility to set a password (hashed on DB).
+- Images will have a preview compressed with `sharp` lib.
+- Download as stream.
 
 ## Preview
 
