@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { fetcher } from "@/utils/fetcher";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  CheckIcon,
   CopyIcon,
   HardDriveUploadIcon,
   Loader2Icon,
@@ -36,12 +37,16 @@ const formSchema = z.object({
   name: z.string().optional(),
   expireDays: z.enum(["1", "7", "30"], "Required."),
   password: z.string().optional(),
-  files: z.any().transform<File[]>((f) => Array.from(f)),
+  files: z
+    .any()
+    .transform<File[]>((f) => Array.from(f))
+    .refine((files) => files.length > 0, "At least one file."),
 });
 
 export default function Home() {
   const [folderPath, setFolderPath] = useState("");
 
+  const [copied, setCopied] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -263,12 +268,25 @@ export default function Home() {
                   navigator.clipboard.writeText(
                     `${window.location.origin}${folderPath}`
                   );
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1000);
                 }}
+                disabled={copied}
               >
-                <CopyIcon />
-                Copy
+                {!copied ? (
+                  <>
+                    <CopyIcon />
+                    Copy
+                  </>
+                ) : (
+                  <>
+                    <CheckIcon />
+                    Copied!
+                  </>
+                )}
               </Button>
             </div>
+
             <div className="text-center">
               <Button asChild>
                 <Link href="/">Do a new upload!</Link>

@@ -18,6 +18,7 @@ A simple application for uploading and sharing files securely via SFTP.
 - Possibility to set a password (hashed on DB).
 - Images will have a preview compressed with `sharp` lib.
 - Download as stream.
+- Download all as zip.
 
 ## Preview
 
@@ -36,6 +37,7 @@ A simple application for uploading and sharing files securely via SFTP.
 - Zod — for schema validation and data parsing.
 - Sharp — for image processing and optimization.
 - ssh2-sftp-client — for SFTP file transfer operations.
+- archiver - for ZIP compression.
 - ws — for WebSocket communication.
 
 ## How to run a local SFTP server

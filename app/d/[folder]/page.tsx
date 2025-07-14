@@ -11,7 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { fetcher } from "@/utils/fetcher";
 import { isImage } from "@/utils/file";
-import { ArrowLeft, FileTextIcon } from "lucide-react";
+import { ArrowLeft, DownloadIcon, FileTextIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -68,9 +68,19 @@ export default async function FolderPage({
         </Link>
       </Button>
       <Card className="w-full h-full max-h-[80%]">
-        <CardHeader>
-          <CardTitle>{collection.data.name || "Folder"}</CardTitle>
-          <CardDescription>Your shared files</CardDescription>
+        <CardHeader className="flex justify-between">
+          <div>
+            <CardTitle className="text-2xl">
+              {collection.data.name || "Folder"}
+            </CardTitle>
+            <CardDescription>Your shared files</CardDescription>
+          </div>
+          <Button asChild>
+            <Link href={formatUrl(folder, "zip", password)} target="_blank">
+              <DownloadIcon />
+              Download all
+            </Link>
+          </Button>
         </CardHeader>
         <Separator />
         <CardContent className="grid grid-cols-4 gap-4 overflow-y-auto h-full">
