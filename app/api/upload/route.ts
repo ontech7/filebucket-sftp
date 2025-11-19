@@ -2,7 +2,9 @@ import { formatSftpRemotePath, sftpConfig } from "@/lib/sftp";
 import { generateRandomPath } from "@/utils/crypto";
 import { isImage } from "@/utils/file";
 import { createCollection } from "@/utils/services/collection";
+import { isFeatureEnabled } from "@/utils/services/featureFlag";
 import { createFile } from "@/utils/services/file";
+import { FeatureName } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { extname } from "path";
 import sharp from "sharp";
@@ -16,6 +18,17 @@ export const config = {
 
 export const POST = async (req: NextRequest) => {
   try {
+    const platformAvailable = await isFeatureEnabled(
+      FeatureName.PLATFORM_AVAILABLE
+    );
+
+    if (!platformAvailable?.enabled) {
+      return NextResponse.json(
+        { error: "The platform is not available at this time." },
+        { status: 503 }
+      );
+    }
+
     const formData = await req.formData();
     const files = formData.getAll("files") as File[];
 

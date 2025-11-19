@@ -1,6 +1,8 @@
 import { formatSftpRemotePath, sftpConfig } from "@/lib/sftp";
 import { getCollection } from "@/utils/services/collection";
+import { isFeatureEnabled } from "@/utils/services/featureFlag";
 import { getFile } from "@/utils/services/file";
+import { FeatureName } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 import SftpClient from "ssh2-sftp-client";
@@ -10,6 +12,17 @@ export const GET = async (
   { params }: { params: Promise<{ folder: string; name: string }> }
 ) => {
   try {
+    const platformAvailable = await isFeatureEnabled(
+      FeatureName.PLATFORM_AVAILABLE
+    );
+
+    if (!platformAvailable?.enabled) {
+      return NextResponse.json(
+        { error: "The platform is not available at this time." },
+        { status: 503 }
+      );
+    }
+
     const { folder, name } = await params;
 
     const collection = await getCollection({
@@ -76,7 +89,7 @@ export const GET = async (
 
     await sftp.end();
 
-    return new NextResponse(previewBuffer, {
+    return new NextResponse(new Uint8Array(previewBuffer), {
       status: 200,
       headers: {
         "Content-Type": "image/jpeg",

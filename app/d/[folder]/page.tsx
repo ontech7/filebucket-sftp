@@ -1,4 +1,4 @@
-import { FilePasswordForm } from "@/components/file-password-form";
+import { FilePasswordForm } from "@/app/d/[folder]/components/file-password-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,

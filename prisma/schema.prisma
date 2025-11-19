@@ -13,39 +13,54 @@ datasource db {
 }
 
 model Collection {
-  id           String      @id @default(uuid())
-  createdAt    DateTime    @default(now())
-  expiresAt    DateTime
-  
-  name         String?
-  accessUrl    String      @unique
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 
-  password     String?
-  
-  files        File[]
-  accessLogs   AccessLog[]
+  name      String?
+  accessUrl String  @unique
+
+  password String?
+
+  files      File[]
+  accessLogs AccessLog[]
 }
 
 model File {
-  id               String      @id @default(uuid())
-  createdAt        DateTime    @default(now())
-  
-  filename         String      
-  originalName     String
-  size             Int
-  mimeType         String
-  
-  collectionId     String       
-  collection       Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  filename     String
+  originalName String
+  size         Int
+  mimeType     String
+
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 }
 
 model AccessLog {
-  id            String       @id @default(uuid())
-  accessedAt    DateTime     @default(now())
-  
-  collectionId  String
-  collection    Collection   @relation(fields: [collectionId], references: [id])
-  
-  ip            String
-  userAgent     String
+  id         String   @id @default(uuid())
+  accessedAt DateTime @default(now())
+
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id])
+
+  ip        String
+  userAgent String
+}
+
+model FeatureFlag {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        FeatureName @unique
+  description String?
+  enabled     Boolean     @default(false)
+}
+
+enum FeatureName {
+  PLATFORM_AVAILABLE
 }

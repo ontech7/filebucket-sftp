@@ -1,5 +1,7 @@
 import { getCollection } from "@/utils/services/collection";
+import { isFeatureEnabled } from "@/utils/services/featureFlag";
 import { getFiles } from "@/utils/services/file";
+import { FeatureName } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,6 +10,17 @@ export const GET = async (
   { params }: { params: Promise<{ name: string }> }
 ) => {
   try {
+    const platformAvailable = await isFeatureEnabled(
+      FeatureName.PLATFORM_AVAILABLE
+    );
+
+    if (!platformAvailable?.enabled) {
+      return NextResponse.json(
+        { error: "The platform is not available at this time." },
+        { status: 503 }
+      );
+    }
+
     const { name } = await params;
 
     const collection = await getCollection({
