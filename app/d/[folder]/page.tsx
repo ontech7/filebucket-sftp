@@ -11,6 +11,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { fetcher } from "@/utils/fetcher";
 import { isImage } from "@/utils/file";
+import { isFeatureEnabled } from "@/utils/services/featureFlag";
+import { FeatureName } from "@prisma/client";
 import { ArrowLeft, DownloadIcon, FileTextIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -37,6 +39,14 @@ export default async function FolderPage({
   searchParams: Promise<{ p: string }>;
   params: Promise<{ folder: string }>;
 }) {
+  const platformAvailable = await isFeatureEnabled(
+    FeatureName.PLATFORM_AVAILABLE
+  );
+
+  if (!platformAvailable?.enabled) {
+    redirect("/unavailable");
+  }
+
   const { folder } = await params;
   const { p: password } = await searchParams;
 
@@ -57,11 +67,11 @@ export default async function FolderPage({
   }
 
   return collection.data.password ? (
-    <main className="h-screen max-w-[600px] w-full mx-auto flex justify-center items-center">
+    <main className="h-screen max-w-[600px] w-full mx-auto px-5 flex justify-center items-center">
       <FilePasswordForm />
     </main>
   ) : (
-    <main className="h-screen max-w-[1000px] w-full mx-auto flex flex-col justify-center items-center">
+    <main className="h-screen max-w-[1000px] w-full mx-auto px-5 flex flex-col justify-center items-center">
       <Button className="self-start mb-4" asChild>
         <Link href="/">
           <ArrowLeft /> Go back
