@@ -19,7 +19,7 @@ export default async function RootLayout({
     FeatureName.PLATFORM_AVAILABLE
   );
 
-  if (platformAvailable?.enabled) {
+  if (!platformAvailable?.enabled) {
     return (
       <html lang="en">
         <body>
