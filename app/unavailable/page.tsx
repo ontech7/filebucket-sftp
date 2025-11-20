@@ -3,6 +3,8 @@ import { FeatureName } from "@prisma/client";
 import { CloudOffIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 
+export const revalidate = 600;
+
 export default async function UnavailablePage() {
   const platformAvailable = await isFeatureEnabled(
     FeatureName.PLATFORM_AVAILABLE
