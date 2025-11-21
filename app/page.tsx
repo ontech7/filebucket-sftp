@@ -3,8 +3,6 @@ import { FeatureName } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { FileUploadForm } from "./components/file-upload-form";
 
-export const revalidate = 600;
-
 export default async function HomePage() {
   const platformAvailable = await isFeatureEnabled(
     FeatureName.PLATFORM_AVAILABLE
